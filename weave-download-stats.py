@@ -57,7 +57,7 @@ def updateSheet(gc):
     ws.update_cell(rc,2,downloadCount)
 
 def getDownloadCount():
-    weaveReleaseData = "https://api.github.com/repos/zettio/weave/releases/latest"
+    weaveReleaseData = "https://api.github.com/repos/weaveworks/weave/releases/latest"
 
     jdata = urlopen(weaveReleaseData)
     data = json.loads(jdata.read())
