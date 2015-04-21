@@ -2,6 +2,8 @@
 #
 # Update google spreadsheet with download data
 # for github release of weave
+#
+# and docker hub...
 
 import gspread
 import json
@@ -11,6 +13,10 @@ import re
 from oauth2client.client import SignedJwtAssertionCredentials
 from urllib2 import urlopen
 from datetime import date
+from bs4 import BeautifulSoup
+
+dockerUrls = {}
+dockerReposList = "docker-urls.txt"
 
 def oauthLogin():
     try:
@@ -38,7 +44,7 @@ def oauthLogin():
 
     return (gc)
 
-def updateSheet(gc):
+def updateGithubSheet(gc):
     sh = gc.open(os.environ['WEAVE_STATS_SHEET'])
     ws = sh.worksheet("Github Downloads")
 
@@ -46,17 +52,41 @@ def updateSheet(gc):
     datesList = ws.col_values(1)
 
     if today in datesList:
-        exit(0)
+        return
 
-    downloadCount = getDownloadCount()
+    downloadCount = getGithubDownloadCount()
+    starCount = getGithubStarCount()
 
     rc = len(datesList)
     rc += 1
 
     ws.update_cell(rc,1,date.today())
     ws.update_cell(rc,2,downloadCount)
+    ws.update_cell(rc,3,starCount)
 
-def getDownloadCount():
+def updateDockerSheet(gc):
+    sh = gc.open(os.environ['WEAVE_STATS_SHEET'])
+    ws = sh.worksheet("Docker Hub")
+
+    today = str(date.today().strftime('%-m/%-d/%Y'))
+    datesList = ws.col_values(1)
+
+    if today in datesList:
+        return
+
+    loadDockerRepoList(dockerReposList)
+    dockerDownloads = extractDockerDownloads(dockerUrls)
+
+    rc = len(datesList)
+    rc += 1
+
+    for repo, downloads in dockerDownloads.iteritems():
+        ws.update_cell(rc,1,date.today())
+        ws.update_cell(rc,2,repo)
+        ws.update_cell(rc,3,downloads)
+        rc += 1
+
+def getGithubDownloadCount():
     weaveReleaseData = "https://api.github.com/repos/weaveworks/weave/releases/latest"
 
     jdata = urlopen(weaveReleaseData)
@@ -64,6 +94,37 @@ def getDownloadCount():
 
     return data['assets'][0]['download_count']
 
+def getGithubStarCount():
+    weaveRepoUrl = "https://api.github.com/repos/weaveworks/weave"
+
+    jdata = urlopen(weaveRepoUrl)
+    data = json.loads(jdata.read())
+
+    return data['stargazers_count']
+
+def loadDockerRepoList(inFile):
+    for s in (line.strip() for line in open(inFile)):
+        tmpRepo = s.split("/")
+        repo = "%s/%s" % ( tmpRepo[4], tmpRepo[5])
+        dockerUrls[repo] = s
+
+def extractDockerDownloads(urls):
+
+    dockerDownloads = {}
+
+    for repo, url in urls.iteritems():
+        u = urlopen(url)
+        r = u.read()
+
+        soup = BeautifulSoup(r)
+        tag = soup.find('span', { 'class' : 'downloads'})
+        downloads = tag.string.extract()
+
+        dockerDownloads[repo] = downloads
+
+    return(dockerDownloads)
+
 if __name__ == '__main__':
     gc = oauthLogin()
-    updateSheet(gc)
+    updateGithubSheet(gc)
+    updateDockerSheet(gc)
