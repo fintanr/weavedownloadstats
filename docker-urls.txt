@@ -2,3 +2,6 @@ https://registry.hub.docker.com/u/zettio/weave
 https://registry.hub.docker.com/u/zettio/weavedns
 https://registry.hub.docker.com/u/zettio/weavetools
 https://registry.hub.docker.com/u/zettio/weaveexec
+https://registry.hub.docker.com/u/weaveworks/weave
+https://registry.hub.docker.com/u/weaveworks/weavedns
+https://registry.hub.docker.com/u/weaveworks/weaveexec

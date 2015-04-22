@@ -46,7 +46,7 @@ def oauthLogin():
 
 def updateGithubSheet(gc):
     sh = gc.open(os.environ['WEAVE_STATS_SHEET'])
-    ws = sh.worksheet("Github Downloads")
+    ws = sh.worksheet("Github Release Downloads")
 
     today = str(date.today().strftime('%-m/%-d/%Y'))
     datesList = ws.col_values(1)
@@ -72,7 +72,7 @@ def updateDockerSheet(gc):
     datesList = ws.col_values(1)
 
     if today in datesList:
-        return
+       return
 
     loadDockerRepoList(dockerReposList)
     dockerDownloads = extractDockerDownloads(dockerUrls)
