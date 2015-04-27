@@ -62,7 +62,7 @@ def updateGithubSheet(gc):
 
     ws.update_cell(rc,1,date.today())
     ws.update_cell(rc,2,downloadCount)
-    ws.update_cell(rc,3,starCount)
+    ws.update_cell(rc,4,starCount)
 
 def updateDockerSheet(gc):
     sh = gc.open(os.environ['WEAVE_STATS_SHEET'])
