@@ -18,6 +18,9 @@ from bs4 import BeautifulSoup
 dockerUrls = {}
 dockerReposList = "docker-urls.txt"
 
+repoUrls = {}
+repoList = "github-repos.txt"
+
 def oauthLogin():
     try:
         os.environ['GOOGLE_KEY']
@@ -107,6 +110,9 @@ def loadDockerRepoList(inFile):
         tmpRepo = s.split("/")
         repo = "%s/%s" % ( tmpRepo[4], tmpRepo[5])
         dockerUrls[repo] = s
+
+#def loadGithubRepoList(inFile):
+#   for s in ( line.strip() for line in open(inFile)):
 
 def extractDockerDownloads(urls):
 
