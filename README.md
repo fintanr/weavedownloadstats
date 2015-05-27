@@ -21,5 +21,5 @@ weave_downloads_graph.R generates a cumulative graph of downloads
 
 ## Dependencies
 
-[gspread](https://github.com/burnash/gspread)
-[oauth2client](https://github.com/google/oauth2client)
+* [gspread](https://github.com/burnash/gspread)
+* [oauth2client](https://github.com/google/oauth2client)
